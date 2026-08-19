@@ -1,31 +1,34 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+
+from models.chat import ChatRequest, ChatResponse
 from services.ai_service import get_ai_response
-from services.db_service import save_chat, get_chats
-from services.db_service import clear_chats
+from services.db_service import save_chat, get_chats, clear_chats
+
 
 router = APIRouter()
 
-@router.get("/chat")
-def chat(query: str):
-    response = get_ai_response(query)
 
-    # Save to DB
-    save_chat(query, response)
+@router.post("/chat", response_model=ChatResponse)
+def chat(request: ChatRequest):
+    try:
+        response = get_ai_response(request.query)
+        save_chat(request.query, response)
 
-    return {"response": response}
+        return ChatResponse(response=response)
+
+    except Exception as e:
+        print(f"❌ CHAT ERROR: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to process chat request: {str(e)}"
+        )
+
 
 @router.get("/history")
-def chat_history():
-    chats = get_chats()
+def history():
+    return get_chats()
 
-    result = []
-    for q, r in chats:
-        result.append({"query": q, "response": r})
-
-    return {"history": result}
 
 @router.delete("/clear")
-def clear_chat():
-    clear_chats()
-    return {"message": "Chats cleared"}
-
+def clear():
+    return clear_chats()
