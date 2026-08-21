@@ -17,3 +17,6 @@ requests
 psycopg2-binary
 openai
 redis
+prometheus-fastapi-instrumentator
+
+

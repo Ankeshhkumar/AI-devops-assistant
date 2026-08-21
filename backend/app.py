@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.chat import router as chat_router
+from prometheus_fastapi_instrumentator import Instrumentator
+
 
 app = FastAPI()
 
@@ -12,7 +14,10 @@ allow_methods=["*"],
 allow_headers=["*"],
 )
 
+
 app.include_router(chat_router)
+
+Instrumentator().instrument(app).expose(app)
 
 @app.get("/")
 def home():
