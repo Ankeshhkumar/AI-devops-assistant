@@ -32,7 +32,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ankeshhkumar/ai-devops-assistant:latest ./backend
+          docker build -t ankeshhkumar/ai-devops-assistant:3ff1e3522546de67c8e20c169024250cf7997f64 ./backend
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v4
