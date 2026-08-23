@@ -42,4 +42,4 @@ jobs:
 
       - name: Push Docker image to Docker Hub
         run: |
-          docker push ankeshhkumar/ai-devops-assistant:latest
+          docker push ankeshhkumar/ai-devops-assistant:3ff1e3522546de67c8e20c169024250cf7997f64
