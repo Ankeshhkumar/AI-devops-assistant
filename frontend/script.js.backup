@@ -1,23 +1,42 @@
+const API_URL = "http://localhost:8000";
+
 // Load chat history on page load
 async function loadHistory() {
     const chatBox = document.getElementById("chat-box");
+
     try {
-        const response = await fetch("http://192.168.49.2:30007/history");
+        const response = await fetch(`${API_URL}/history`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
         const data = await response.json();
 
-        data.history.forEach(chat => {
-            chatBox.innerHTML += `<div class="message user">${escapeHtml(chat.query)}</div>`;
-            chatBox.innerHTML += `<div class="message bot">${escapeHtml(chat.response)}</div>`;
+        data.forEach(chat => {
+            chatBox.innerHTML += `
+                <div class="message user">
+                    ${escapeHtml(chat[0])}
+                </div>
+            `;
+
+            chatBox.innerHTML += `
+                <div class="message bot">
+                    ${escapeHtml(chat[1])}
+                </div>
+            `;
         });
 
         chatBox.scrollTo({
             top: chatBox.scrollHeight,
             behavior: "smooth"
         });
+
     } catch (error) {
         console.error("Failed to load history:", error);
     }
 }
+
 
 // Send message function
 async function sendMessage() {
@@ -25,19 +44,26 @@ async function sendMessage() {
     const chatBox = document.getElementById("chat-box");
 
     const userText = input.value.trim();
+
     if (!userText) return;
 
     // User message
-    chatBox.innerHTML += `<div class="message user">${escapeHtml(userText)}</div>`;
+    chatBox.innerHTML += `
+        <div class="message user">
+            ${escapeHtml(userText)}
+        </div>
+    `;
 
     // Typing animation
     const loadingId = "loading-" + Date.now();
+
     chatBox.innerHTML += `
         <div class="message bot" id="${loadingId}">
             <span class="dot"></span>
             <span class="dot"></span>
             <span class="dot"></span>
-        </div>`;
+        </div>
+    `;
 
     chatBox.scrollTo({
         top: chatBox.scrollHeight,
@@ -48,20 +74,42 @@ async function sendMessage() {
     input.disabled = true;
 
     try {
-        const response = await fetch(
-            `http://192.168.49.2:30007/chat?query=${encodeURIComponent(userText)}`
-        );
+        const response = await fetch(`${API_URL}/chat`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                query: userText
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
         const data = await response.json();
 
-        // Remove loading animation
+        // Remove typing animation
         document.getElementById(loadingId).remove();
 
         // Show bot response
-        chatBox.innerHTML += `<div class="message bot">${escapeHtml(data.response)}</div>`;
+        chatBox.innerHTML += `
+            <div class="message bot">
+                ${escapeHtml(data.response)}
+            </div>
+        `;
 
     } catch (error) {
+        console.error("Chat request failed:", error);
+
         document.getElementById(loadingId).remove();
-        chatBox.innerHTML += `<div class="message bot">Error connecting to backend</div>`;
+
+        chatBox.innerHTML += `
+            <div class="message bot">
+                Error connecting to backend
+            </div>
+        `;
     }
 
     chatBox.scrollTo({
@@ -73,17 +121,26 @@ async function sendMessage() {
     input.focus();
 }
 
+
 // Clear chat function
 async function clearChat() {
     try {
-        await fetch("http://192.168.49.2:30007/history", {
+        const response = await fetch(`${API_URL}/clear`, {
             method: "DELETE"
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
         document.getElementById("chat-box").innerHTML = "";
+
     } catch (error) {
+        console.error("Failed to clear chat:", error);
         alert("Failed to clear chat");
     }
 }
+
 
 // Escape HTML to prevent XSS
 function escapeHtml(text) {
@@ -91,6 +148,7 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+
 
 // Enter key support
 document.getElementById("user-input")
@@ -100,6 +158,6 @@ document.getElementById("user-input")
         }
     });
 
+
 // Load history when page loads
 window.addEventListener("DOMContentLoaded", loadHistory);
-

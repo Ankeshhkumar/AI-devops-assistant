@@ -7,7 +7,7 @@ load_dotenv()
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 MODEL_NAME = os.getenv(
     "OPENROUTER_MODEL",
-    "openai/gpt-oss-20b:free"
+    "google/gemma-4-26b-a4b-it:free"
 )
 
 if not API_KEY:
@@ -31,7 +31,6 @@ def get_ai_response(query: str):
 
         response = client.chat.completions.create(
             model=MODEL_NAME,
-
             messages=[
                 {
                     "role": "system",
@@ -48,45 +47,18 @@ def get_ai_response(query: str):
                     "content": query,
                 },
             ],
-
             temperature=0.2,
-
             max_tokens=1024,
-
-            extra_body={
-                "reasoning": {
-                    "effort": "low"
-                }
-            },
         )
 
         choice = response.choices[0]
-        message = choice.message
+        answer = choice.message.content
 
-        print(
-            "✅ Response successfully received from OpenRouter."
-        )
-
-        print(
-            f"🔍 Finish reason: {choice.finish_reason}"
-        )
-
-        print(
-            f"🔍 Content available: "
-            f"{message.content is not None}"
-        )
-
-        answer = message.content
+        print("✅ Response successfully received from OpenRouter.")
+        print(f"🔍 Finish reason: {choice.finish_reason}")
+        print(f"🔍 Content available: {answer is not None}")
 
         if not answer:
-            print(
-                f"⚠️ Empty final response from model."
-            )
-
-            print(
-                f"🔍 Message: {message}"
-            )
-
             raise RuntimeError(
                 "OpenRouter returned an empty final response"
             )
@@ -94,11 +66,7 @@ def get_ai_response(query: str):
         return answer.strip()
 
     except Exception as e:
-
-        print(
-            f"❌ OpenRouter API Error: {e}"
-        )
-
+        print(f"❌ OpenRouter API Error: {e}")
         raise RuntimeError(
             f"Failed to process OpenRouter request: {e}"
         )

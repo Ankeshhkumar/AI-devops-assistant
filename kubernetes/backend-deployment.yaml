@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ai-devops-app
+          image: ankeshhkumar/ai-devops-assistant:3ff1e3522546de67c8e20c169024250cf7997f64
           imagePullPolicy: Never
           ports:
             - containerPort: 8000
@@ -27,3 +27,10 @@ spec:
               value: postgres
             - name: DB_PASSWORD
               value: postgres
+            - name: OPENROUTER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openrouter-secret
+                  key: OPENROUTER_API_KEY
+            - name: OPENROUTER_MODEL
+              value: "z-ai/glm-5.2:free"
