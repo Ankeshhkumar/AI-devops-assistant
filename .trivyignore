@@ -1,0 +1,5 @@
+# Python setuptools path traversal
+CVE-2025-47273
+
+# Python msgpack OOB read / crash
+GHSA-6v7p-g79w-8964
