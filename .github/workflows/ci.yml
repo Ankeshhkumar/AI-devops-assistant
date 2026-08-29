@@ -1,4 +1,4 @@
-name: AI Devops Assistant CI
+name: AI Devops Assistant-CI
 
 on:
   push:
