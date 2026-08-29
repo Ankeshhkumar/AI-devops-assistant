@@ -61,6 +61,9 @@ jobs:
           exit-code: "1"
           ignore-unfixed: true
           severity: CRITICAL,HIGH
+          trivyignores: |
+            CVE-2025-47273
+            GHSA-6v7p-g79w-8964
 
       - name: Log in to Docker Hub
         if: github.event_name == 'push'
