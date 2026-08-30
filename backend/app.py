@@ -23,3 +23,12 @@ Instrumentator().instrument(app).expose(app)
 def home():
     return {"message": "AI DevOps Assistant Running 🚀"}
 
+
+@app.get("/health/live")
+def liveness():
+    return {"status": "alive"}
+
+
+@app.get("/health/ready")
+def readiness():
+    return {"status": "ready"}
