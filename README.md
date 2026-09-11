@@ -4,6 +4,9 @@ An end-to-end AI-powered DevOps Assistant built with **FastAPI, PostgreSQL, Redi
 
 The project demonstrates the complete path from application development to containerization, Kubernetes deployment, observability, security scanning and operational troubleshooting.
 
+<img width="1235" height="785" alt="image" src="https://github.com/user-attachments/assets/c8082b9b-11b5-4cf1-a677-bde4ce0e7f91" />
+
+
 ## 🎯 Use Case
 
 A user asks a DevOps question through the web UI. The request is handled by FastAPI, checked against Redis, sent to the LLM on a cache miss, cached for future requests, and persisted in PostgreSQL.
