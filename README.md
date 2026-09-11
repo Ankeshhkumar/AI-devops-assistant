@@ -4,6 +4,8 @@ An end-to-end AI-powered DevOps Assistant built with **FastAPI, PostgreSQL, Redi
 
 The project demonstrates the complete path from application development to containerization, Kubernetes deployment, observability, security scanning and operational troubleshooting.
 
+Built an AI-powered DevOps Assistant using FastAPI, PostgreSQL, Redis and OpenRouter. Containerized the application with Docker, reduced image size using a slim Python base image, deployed three backend replicas on Kubernetes/Minikube, implemented health probes and Kubernetes Secrets, added Prometheus/Grafana observability, and integrated Trivy for container security scanning.
+
 <img width="1235" height="785" alt="image" src="https://github.com/user-attachments/assets/c8082b9b-11b5-4cf1-a677-bde4ce0e7f91" />
 
 
@@ -308,10 +310,6 @@ curl http://192.168.49.2:30007/health/live
 - Git/GitHub workflows
 - CI/CD concepts
 - Real-world troubleshooting
-
-## 🎤 Interview Summary
-
-> Built an AI-powered DevOps Assistant using FastAPI, PostgreSQL, Redis and OpenRouter. Containerized the application with Docker, reduced image size using a slim Python base image, deployed three backend replicas on Kubernetes/Minikube, implemented health probes and Kubernetes Secrets, added Prometheus/Grafana observability, and integrated Trivy for container security scanning.
 
 ## 🔮 Next Improvements
 
