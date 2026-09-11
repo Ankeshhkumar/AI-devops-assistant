@@ -3,28 +3,278 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>AI DevOps Assistant</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <div class="chat-container">
-    <h2>🤖 AI DevOps Assistant</h2>
+  <!-- Animated background -->
+  <div class="space-background">
+    <div class="earth-glow"></div>
+    <div class="stars stars-one"></div>
+    <div class="stars stars-two"></div>
+  </div>
 
-    <div id="chat-box"></div>
+  <div class="app-shell">
 
-    <button onclick="clearChat()" class="clear-btn">🗑️ Clear Chat</button>
+    <!-- ================= SIDEBAR ================= -->
 
-    <div class="input-area">
-      <input
-        type="text"
-        id="user-input"
-        placeholder="Ask something..."
-      />
-      <button onclick="sendMessage()">Send</button>
-    </div>
+    <aside class="sidebar">
+
+      <div class="sidebar-header">
+
+        <div class="brand">
+          <div class="brand-icon">🤖</div>
+
+          <div>
+            <div class="brand-title">
+              AI <span>DevOps</span>
+            </div>
+
+            <div class="brand-subtitle">
+              Assistant
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="icon-btn"
+          onclick="toggleSidebar()"
+          title="Collapse sidebar"
+        >
+          ☰
+        </button>
+
+      </div>
+
+
+      <!-- New Chat -->
+
+      <button
+        class="new-chat-btn"
+        onclick="newChat()"
+      >
+        <span class="new-chat-icon">＋</span>
+        <span>New Chat</span>
+      </button>
+
+
+      <!-- Search -->
+
+      <div class="search-box">
+
+        <span class="search-icon">⌕</span>
+
+        <input
+          type="text"
+          id="history-search"
+          placeholder="Search conversations..."
+          oninput="searchHistory()"
+        >
+
+      </div>
+
+
+      <!-- History -->
+
+      <div class="history-container">
+
+        <div class="history-section">
+
+          <div class="section-title">
+            Conversations
+          </div>
+
+          <div id="history-list"></div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Clear history -->
+
+      <button
+        class="clear-history-btn"
+        onclick="clearChat()"
+      >
+        <span>🗑</span>
+        Clear all history
+      </button>
+
+
+      <!-- User profile -->
+
+      <div class="sidebar-profile">
+
+        <div class="profile-avatar">
+          A
+        </div>
+
+        <div class="profile-info">
+
+          <div class="profile-name">
+            Ankesh
+          </div>
+
+          <div class="profile-role">
+            DevOps Engineer
+          </div>
+
+        </div>
+
+        <button
+          class="profile-settings"
+          title="Settings"
+        >
+          ⚙
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+      <!-- Top bar -->
+
+      <header class="top-bar">
+
+        <div class="mobile-brand">
+          🤖 <span>AI <b>DevOps</b></span>
+        </div>
+
+        <div class="connection-status">
+
+          <span class="status-dot"></span>
+
+          <span>Online</span>
+
+        </div>
+
+      </header>
+
+
+      <!-- Chat area -->
+
+      <section class="chat-container">
+
+        <!-- Welcome -->
+
+        <div
+          id="welcome-screen"
+          class="welcome-screen"
+        >
+
+          <div class="welcome-icon">
+            🤖
+          </div>
+
+          <h1>
+            AI DevOps Assistant
+          </h1>
+
+          <p>
+            Your intelligent companion for Kubernetes, Docker,
+            Linux, cloud infrastructure and DevOps troubleshooting.
+          </p>
+
+          <div class="welcome-suggestions">
+
+            <button onclick="useSuggestion('Why is my Kubernetes pod failing?')">
+              ☸️ Kubernetes troubleshooting
+            </button>
+
+            <button onclick="useSuggestion('How can I optimize my Docker image?')">
+              🐳 Docker optimization
+            </button>
+
+            <button onclick="useSuggestion('How do I troubleshoot Redis connection issues?')">
+              🔴 Redis troubleshooting
+            </button>
+
+            <button onclick="useSuggestion('How can I check Kubernetes pod health?')">
+              ❤️ Kubernetes health checks
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- Messages -->
+
+        <div
+          id="chat-box"
+          class="chat-box"
+        ></div>
+
+      </section>
+
+
+      <!-- Input area -->
+
+      <div class="input-wrapper">
+
+        <div class="input-glass">
+
+          <textarea
+            id="user-input"
+            rows="1"
+            placeholder="Ask anything about DevOps..."
+          ></textarea>
+
+
+          <div class="input-bottom">
+
+            <div class="input-tools">
+
+              <button
+                class="tool-btn"
+                title="Attach"
+              >
+                ＋
+              </button>
+
+              <button
+                class="tool-btn"
+                title="Code"
+              >
+                &lt;/&gt;
+              </button>
+
+            </div>
+
+
+            <button
+              id="send-btn"
+              class="send-btn"
+              onclick="sendMessage()"
+              title="Send"
+            >
+              ➤
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="input-disclaimer">
+          AI can make mistakes. Verify important infrastructure changes.
+        </div>
+
+      </div>
+
+    </main>
 
   </div>
+
 
   <script src="script.js"></script>
 
