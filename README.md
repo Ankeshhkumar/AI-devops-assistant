@@ -1,4 +1,4 @@
-# 🤖 AI DevOps Assistant
+# AI DevOps Assistant
 
 An end-to-end AI-powered DevOps Assistant built with **FastAPI, PostgreSQL, Redis, OpenRouter, Docker, Kubernetes, Prometheus, Grafana, Trivy, Git and GitHub**.
 
