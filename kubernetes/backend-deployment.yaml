@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ankeshhkumar/ai-devops-assistant:dee386c54a3dbed8f480c9cf5a9dfe156e7ae5a3
+          image: ankeshhkumar/ai-devops-assistant:local
           imagePullPolicy: Never
 
           ports:
@@ -23,6 +23,12 @@ spec:
           env:
             - name: DB_HOST
               value: postgres
+
+            - name: REDIS_HOST
+              value: redis
+
+            - name: REDIS_PORT
+              value: "6379"
 
             - name: DB_NAME
               value: ai_chat
