@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ai-devops-assistant
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Ankeshhkumar/AI-devops-assistant.git
+    targetRevision: main
+    path: git-ops/ai-devops-gitops
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

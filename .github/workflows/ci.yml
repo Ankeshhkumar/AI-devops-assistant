@@ -2,61 +2,66 @@ name: AI Devops Assistant-CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    paths-ignore:
+      - "git-ops/**"
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   contents: read
 
+env:
+  IMAGE: ankeshhkumar/ai-devops-assistant
+
 jobs:
-  test-and-build:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
-          cache: "pip"
+          cache: pip
           cache-dependency-path: backend/requirements.txt
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r backend/requirements.txt
-
-      - name: Install security scanning tools
-        run: |
           pip install bandit pip-audit
 
-      - name: Run Bandit code security scan
-        run: |
-          bandit -r backend -x backend/__pycache__
+      - name: Bandit code security scan
+        run: bandit -r backend -x backend/__pycache__
 
-      - name: Run dependency vulnerability scan
-        run: |
-          pip-audit -r backend/requirements.txt
+      - name: Dependency vulnerability scan
+        run: pip-audit -r backend/requirements.txt
 
       - name: Validate Python files
-        run: |
-          python -m compileall backend
+        run: python -m compileall backend
 
-      - name: Build Docker image
-        run: |
-          docker build \
-            -t ankeshhkumar/ai-devops-assistant:${{ github.sha }} \
-            ./backend
+  images:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
 
-      - name: Scan Docker image with Trivy
-        uses: aquasecurity/trivy-action@v0.36.0
+      - name: Build image (local only, for scanning)
+        uses: docker/build-push-action@v6
         with:
-          image-ref: ankeshhkumar/ai-devops-assistant:${{ github.sha }}
+          context: ./backend
+          load: true
+          tags: ${{ env.IMAGE }}:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ env.IMAGE }}:ci
           format: table
           exit-code: "1"
           ignore-unfixed: true
@@ -65,12 +70,40 @@ jobs:
 
       - name: Log in to Docker Hub
         if: github.event_name == 'push'
-        uses: docker/login-action@v4
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Push Docker image to Docker Hub
+      - name: Push image (amd64 + arm64, SHA tag only)
         if: github.event_name == 'push'
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.IMAGE }}:${{ github.sha }}
+          cache-from: type=gha
+
+  update-manifests:
+    needs: images
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set new image tag
         run: |
-          docker push ankeshhkumar/ai-devops-assistant:${{ github.sha }}
+          sed -i "s|image: .*/ai-devops-assistant:.*|image: ${{ env.IMAGE }}:${{ github.sha }}|" \
+            git-ops/ai-devops-gitops/backend-deployment.yaml
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add git-ops
+          git diff --cached --quiet || git commit -m "ci: deploy ${{ github.sha }}"
+          git pull --rebase origin main
+          git push
