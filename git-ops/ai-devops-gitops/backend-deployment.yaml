@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ankeshhkumar/ai-devops-assistant:local
+          image: ankeshhkumar/ai-devops-assistant:e7c943621a32bf6e397700178e336f9b05f15d96
           imagePullPolicy: IfNotPresent
 
           ports:
